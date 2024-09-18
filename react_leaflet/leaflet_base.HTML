@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet India Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 500px; width: 100%; }
+        #locationInput { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Leaflet India Map</h1>
+    <input type="text" id="locationInput" placeholder="Enter a location (e.g., Bengaluru, Karnataka)">
+    <button onclick="focusLocation()">Go</button>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to focus on a specified location
+        function focusLocation() {
+            var location = document.getElementById('locationInput').value;
+
+            if (!location) {
+                alert('Please enter a location.');
+                return;
+            }
+
+            // Use OpenStreetMap Nominatim API for geocoding
+            var url = `https://nominatim.openstreetmap.org/search?format=json&q=${location}, India`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var zoomLevel = location.toLowerCase().includes('state') ? 7 : 12;
+                        map.setView([lat, lon], zoomLevel);
+                    } else {
+                        alert('Location not found. Please enter a valid location.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error finding location. Please try again.');
+                });
+        }
+    </script>
+</body>
+</html>
+
+
+<merlin-component id="merlin-text-summarizer" class="merlin text-summarizer"></merlin-component>
+
+
